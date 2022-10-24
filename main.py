@@ -71,6 +71,10 @@ def save_to_db(cur, playlist, tracksJson, spotifyDataBase):
         trackId = cur.fetchall()[0]
 
         # Add to TrackPlaylist
+
+def fetch_data():
+    # gets data from the db
+    pass
     
 
 def main():
