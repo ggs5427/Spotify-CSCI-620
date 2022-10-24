@@ -2,7 +2,6 @@ import mysql.connector
 import json
 
 from datetime import datetime 
-from numpy import place
 import models
 
 DB_HOST = "127.0.0.1"
@@ -84,6 +83,7 @@ def save_to_db(cur, playlist, tracksJson, spotifyDB):
     
 
 def main():
+    # Establishing a connection with the DB
     spotifyDataBase = mysql.connector.connect(
     host = DB_HOST,
     user = DB_USER,
@@ -97,6 +97,7 @@ def main():
     # preparing a cursor object
     cursorObj = spotifyDataBase.cursor(prepared=True)
     
+    # loads data from json files to respective tables
     load_data(cursorObj, spotifyDataBase)
 
     # Commiting all changes made and disconnecting from the server
