@@ -66,9 +66,10 @@ def save_to_db(cur, playlist, tracksJson, spotifyDB):
             albumId = cur.fetchall()[0]
 
             # Insert Track
+            formatted_date = datetime.fromtimestamp(track.durationMs).strftime('%Y-%m-%d %H:%M:%S')
             cur.execute(
                 "INSERT INTO Tracks (Name, albumId, durationMs) VALUES (%s, %s, %s)",
-                (track.name, albumId, track.durationMs)
+                (track.name, albumId, formatted_date)
             )
 
             cur.execute("SELECT id FROM Tracks WHERE Name=(%s)", (track.name,))
