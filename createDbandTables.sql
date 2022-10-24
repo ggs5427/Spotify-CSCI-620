@@ -11,7 +11,7 @@ CREATE TABLE Playlists(
 );
 
 CREATE TABLE Tracks(
-	id varchar(255) PRIMARY KEY,
+	id INT PRIMARY KEY,
     Name TEXT NOT NULL,
     albumId TEXT,
     durationMs INT
@@ -19,17 +19,17 @@ CREATE TABLE Tracks(
 
 CREATE TABLE Albums(
     Name TEXT NOT NULL,
-    id varchar(255) PRIMARY KEY, 
-    artistId INT
+    id INT PRIMARY KEY, 
+    artistId varchar(320)
 ); 
 
 CREATE TABLE Artists(
     Name TEXT NOT NULL,
-    id varchar(320) PRIMARY KEY 
+    id INT PRIMARY KEY 
 ) ;
 
 CREATE TABLE TrackPlaylist(
-	trackId varchar(255),
+	trackId INT,
 	playlistId INT,
 	foreign key(trackId) references Tracks(id),
     foreign key(playlistId) references Playlists(id)
