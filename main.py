@@ -81,10 +81,6 @@ def save_to_db(cur, playlist, tracksJson, spotifyDB):
         print("Could not execute SQL query")
     finally:
         spotifyDB.commit()
-
-def fetch_data():
-    # gets data from the db
-    pass
     
 
 def main():
