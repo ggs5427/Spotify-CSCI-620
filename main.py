@@ -31,63 +31,64 @@ def load_data(cur, spotifyDataBase):
 
 
 def save_to_db(cur, playlist, tracksJson, spotifyDataBase):
+    
     # Insert to Playlists if the playlist name doesn't exist
     formatted_date = datetime.fromtimestamp(playlist.modifiedAt).strftime('%Y-%m-%d %H:%M:%S')
     print(formatted_date)
-    #cur.execute("SELECT * FROM Playlists")
-    #print(cur.fetchall())
+    cur.execute("SELECT 'Name' FROM playlists")
+    print(cur.fetchall())
     cur.execute(
-        ("INSERT INTO Playlists (Name, Description, modifiedAt, numFollowers, numTracks, collaborative) VALUES (%s,%s,%s,%s,%s,%s)"),
+        "INSERT INTO Playlists ('Name', Description, modifiedAt, numFollowers, numTracks, collaborative) VALUES ('%s','%s','%s','%s','%s','%s')",
         (playlist.name, playlist.description, formatted_date, int(playlist.numFollowers), int(playlist.numTracks), eval(playlist.collaborative))
     )
     spotifyDataBase.commit()
 
-    # Select playlistId
-    val = ('Test')
-    sql = ("SELECT id FROM Playlists WHERE Name=(%s)")
-    cur.execute(sql, val)
-    playlistId = cur.fetchall()[0]
-    # print(playlistId)
+    # # Select playlistId
+    # val = ('Test')
+    # sql = ("SELECT id FROM Playlists WHERE Name=(%s)")
+    # cur.execute(sql, val)
+    # playlistId = cur.fetchall()[0]
+    # # print(playlistId)
 
-    for tracks in tracksJson:
-        # print(tracks['artist_name'])
-        artist = models.Artists(tracks['artist_name'])
-        album = models.Albums(tracks['album_name'])
-        track = models.Tracks(tracks['track_name'], tracks['duration_ms'])
+    # for tracks in tracksJson:
+    #     # print(tracks['artist_name'])
+    #     artist = models.Artists(tracks['artist_name'])
+    #     album = models.Albums(tracks['album_name'])
+    #     track = models.Tracks(tracks['track_name'], tracks['duration_ms'])
 
-        # Insert Artist
-        print(artist.name)
+    #     # Insert Artist
+    #     print(artist.name)
 
-        cur.execute("SELECT * FROM Playlists")
-        print(cur.fetchall())
+    #     cur.execute("SELECT * FROM Playlists")
+    #     print(cur.fetchall())
 
-        cur.execute(
-            "INSERT INTO Artists (Name) VALUES (%s)", 
-            (artist.name))
-        spotifyDataBase.commit()
-        break
-        cur.execute("SELECT id FROM Artists WHERE Name=(%S)", (artist.name))
-        artistId = cur.fetchall()[0]
+    #     cur.execute(
+    #         "INSERT INTO Artists (Name) VALUES (%s)", 
+    #         (artist.name))
+    #     spotifyDataBase.commit()
+    #     break
+        # cur.execute("SELECT id FROM Artists WHERE Name=(%S)", (artist.name))
+        # artistId = cur.fetchall()[0]
 
-        # Insert Albums
-        cur.execute(
-            "INSERT INTO Albums (Name, artistId) VALUES (%s)", 
-            (album.name, artistId))
+        # # Insert Albums
+        # cur.execute(
+        #     "INSERT INTO Albums (Name, artistId) VALUES (%s)", 
+        #     (album.name, artistId))
 
-        cur.execute("SELECT id FROM Albums WHERE Name=(%s)", (album.name))
-        albumId = cur.fetchall()[0]
+        # cur.execute("SELECT id FROM Albums WHERE Name=(%s)", (album.name))
+        # albumId = cur.fetchall()[0]
 
-        # Insert Tracks
-        cur.execute(
-            "INSERT INTO Tracks (Name, albumId, durationMs) VALUES (%s, %s, %s)",
-            (track.name, albumId, track.durationMs)
-        )
+        # # Insert Tracks
+        # cur.execute(
+        #     "INSERT INTO Tracks (Name, albumId, durationMs) VALUES (%s, %s, %s)",
+        #     (track.name, albumId, track.durationMs)
+        # )
 
-        cur.execute("SELECT id FROM Tracks WHERE Name=(%s)", (track.name))
-        trackId = cur.fetchall()[0]
+        # cur.execute("SELECT id FROM Tracks WHERE Name=(%s)", (track.name))
+        # trackId = cur.fetchall()[0]
 
-        # Add to TrackPlaylist
-        cur.execute("INSERT INTO TrackPlaylist (trackId, playlistId) VALUES (%s, %s)", (playlistId, trackId))
+        # # Add to TrackPlaylist
+        # cur.execute("INSERT INTO TrackPlaylist (trackId, playlistId) VALUES (%s, %s)", (playlistId, trackId))
 
 def fetch_data():
     # gets data from the db
