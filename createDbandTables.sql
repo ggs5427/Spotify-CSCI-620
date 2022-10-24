@@ -1,7 +1,7 @@
 CREATE DATABASE spotify;
 
 CREATE TABLE Playlists(
-	id INT PRIMARY KEY,
+	id INT PRIMARY KEY AUTO_INCREMENT,
     Name TEXT NOT NULL,
     Description TEXT,
     modifiedAt datetime DEFAULT current_timestamp ON update current_timestamp,
@@ -11,7 +11,7 @@ CREATE TABLE Playlists(
 );
 
 CREATE TABLE Tracks(
-	id INT PRIMARY KEY,
+	id INT PRIMARY KEY AUTO_INCREMENT,
     Name TEXT NOT NULL,
     albumId TEXT,
     durationMs INT
@@ -19,13 +19,13 @@ CREATE TABLE Tracks(
 
 CREATE TABLE Albums(
     Name TEXT NOT NULL,
-    id INT PRIMARY KEY, 
+    id INT PRIMARY KEY AUTO_INCREMENT, 
     artistId varchar(320)
 ); 
 
 CREATE TABLE Artists(
     Name TEXT NOT NULL,
-    id INT PRIMARY KEY 
+    id INT PRIMARY KEY AUTO_INCREMENT 
 ) ;
 
 CREATE TABLE TrackPlaylist(
