@@ -6,7 +6,7 @@ CREATE TABLE Playlists(
     Description TEXT,
     modifiedAt datetime DEFAULT current_timestamp ON update current_timestamp,
     numFollowers INT DEFAULT 0,
-    numEdits INT DEFAULT 0,
+    numTracks INT DEFAULT 0,
     collaborative bool default false
 );
 

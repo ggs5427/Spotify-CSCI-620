@@ -1,6 +1,7 @@
 import mysql.connector
 import json
 
+from datetime import datetime 
 from numpy import place
 import models
 
@@ -31,46 +32,62 @@ def load_data(cur, spotifyDataBase):
 
 def save_to_db(cur, playlist, tracksJson, spotifyDataBase):
     # Insert to Playlists if the playlist name doesn't exist
+    formatted_date = datetime.fromtimestamp(playlist.modifiedAt).strftime('%Y-%m-%d %H:%M:%S')
+    print(formatted_date)
+    #cur.execute("SELECT * FROM Playlists")
+    #print(cur.fetchall())
     cur.execute(
-        "INSERT INTO PLAYLIST (NAME, DESCRIPTION, MODIFIEDAT, NUMFOLLOWERS, NUMTRACKS, COLLABORATIVE) VALUES (%s, %s, %s, %s, %s, %s)",            (playlist.name, playlist.description, playlist.modifiedAt, playlist.numFollowers, playlist.numTracks, playlist.collaborative)
+        ("INSERT INTO Playlists (Name, Description, modifiedAt, numFollowers, numTracks, collaborative) VALUES (%s,%s,%s,%s,%s,%s)"),
+        (playlist.name, playlist.description, formatted_date, int(playlist.numFollowers), int(playlist.numTracks), eval(playlist.collaborative))
     )
+    spotifyDataBase.commit()
 
     # Select playlistId
-    cur.execute("SELECT ID FROM PLAYLIATS WHERE NAME=(%s)", (playlist.name))
+    val = ('Test')
+    sql = ("SELECT id FROM Playlists WHERE Name=(%s)")
+    cur.execute(sql, val)
     playlistId = cur.fetchall()[0]
+    # print(playlistId)
 
     for tracks in tracksJson:
+        # print(tracks['artist_name'])
         artist = models.Artists(tracks['artist_name'])
         album = models.Albums(tracks['album_name'])
         track = models.Tracks(tracks['track_name'], tracks['duration_ms'])
 
         # Insert Artist
-        cur.execute(
-            "INSERT INTO ARTISTS (NAME)\
-            VALUES (%s)", 
-            (artist.name))
+        print(artist.name)
 
-        cur.execute("SELECT ID FROM ARTISTS WHERE NAME=(%S)", (artist.name))
+        cur.execute("SELECT * FROM Playlists")
+        print(cur.fetchall())
+
+        cur.execute(
+            "INSERT INTO Artists (Name) VALUES (%s)", 
+            (artist.name))
+        spotifyDataBase.commit()
+        break
+        cur.execute("SELECT id FROM Artists WHERE Name=(%S)", (artist.name))
         artistId = cur.fetchall()[0]
 
         # Insert Albums
         cur.execute(
-            "INSERT INTO ALBUMS (NAME, ARTISTID) VALUES (%s)", 
+            "INSERT INTO Albums (Name, artistId) VALUES (%s)", 
             (album.name, artistId))
 
-        cur.execute("SELECT ID FROM ALBUMS WHERE NAME=(%s)", (album.name))
+        cur.execute("SELECT id FROM Albums WHERE Name=(%s)", (album.name))
         albumId = cur.fetchall()[0]
 
         # Insert Tracks
         cur.execute(
-            "INSERT INTO TRACKS (NAME, ALBUMID, DURATIONMS) VALUES (%s, %s, %s)",
+            "INSERT INTO Tracks (Name, albumId, durationMs) VALUES (%s, %s, %s)",
             (track.name, albumId, track.durationMs)
         )
 
-        cur.execute("SELECT ID FROM TRACKS WHERE NAME=(%s)", (track.name))
+        cur.execute("SELECT id FROM Tracks WHERE Name=(%s)", (track.name))
         trackId = cur.fetchall()[0]
 
         # Add to TrackPlaylist
+        cur.execute("INSERT INTO TrackPlaylist (trackId, playlistId) VALUES (%s, %s)", (playlistId, trackId))
 
 def fetch_data():
     # gets data from the db
@@ -84,12 +101,16 @@ def main():
     passwd = DB_PASS,
     database = DB_NAME
     )
+    if spotifyDataBase.is_connected == False:
+        print("Connection not working")
+        return
     
     # preparing a cursor object
-    cursorObj = spotifyDataBase.cursor()
+    cursorObj = spotifyDataBase.cursor(prepared=True)
     
     load_data(cursorObj, spotifyDataBase)
 
+    cursorObj.close()
     # Disconnecting from the server
     spotifyDataBase.close()
 
