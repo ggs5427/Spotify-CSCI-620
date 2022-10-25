@@ -40,7 +40,7 @@ While trying to load the data, we ran into an issue with our database connection
 INSERT INTO Playlists (Name, Description, modifiedAt, numFollowers, numTracks, collaborative) VALUES ("test3", "test", STR_TO_DATE("10-17-2021 15:40:10", "%m-%d-%Y %H:%i:%s"), 0, 0, false);
 ```
 
-After debugging our code for a bit, we found that the issue was coming when we were trying to insert into a table that has more than one column excluding the `id` column. We tried all diferent ways to use the tuple feature that Python MySql's `execute` function provided, but we weren't able to fix the issue. We plan on fining a solution for this bug by the next phase.
+After debugging our code, we found that the issue was when we were trying to insert into a table that has more than one column excluding the `id` column. We tried all different ways to use the tuple feature that Python MySql's `execute` function provided, but we were not able to fix the issue. We plan on fining a solution for this bug by the next phase.
 
 ### Future Plans
 For the next phase, we will be prioritizing loading data into the database and implementing the recommendation system.
