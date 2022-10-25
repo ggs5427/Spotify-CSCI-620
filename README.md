@@ -34,7 +34,13 @@ From the json file, we took all the necessary information for filling up the dat
 
 ![Spotify ERD drawio (1)](https://user-images.githubusercontent.com/47192431/197652946-26e37d0e-6fa9-4622-a953-52e5094116de.png)
 
-While trying to load the data, we ran into an issue with our database connection. *say that you tried all your best, but nothing could fix it. sad*
+While trying to load the data, we ran into an issue with our database connection. We found that the execute statement for inserting records into the database was not working. We took the sql query from our code to the Workbench query console to test if the query was working, and it sucessfully added records to the database. 
+
+```
+INSERT INTO Playlists (Name, Description, modifiedAt, numFollowers, numTracks, collaborative) VALUES ("test3", "test", STR_TO_DATE("10-17-2021 15:40:10", "%m-%d-%Y %H:%i:%s"), 0, 0, false);
+```
+
+After debugging our code for a bit, we found that the issue was coming when we were trying to insert into a table that has more than one column excluding the `id` column. We tried all diferent ways to use the tuple feature that Python MySql's `execute` function provided, but we weren't able to fix the issue. We plan on fining a solution for this bug by the next phase.
 
 ### Future Plans
 For the next phase, we will be prioritizing loading data into the database and implementing the recommendation system.
