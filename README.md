@@ -1,5 +1,5 @@
 # Spotify-CSCI-620
-Song recommendation system for Spotify.
+Song recommendation system for Spotify. We use users' playlist tracks list to tailor song recommendations that will fit their playlist. This recommendation system will be mainly focusing on suggesting new songs, providing an estimate on the possible popularity of a playlist, giving users the option to generate a playlist based on a popular song and giving users the option to create a playlist of frequently added songs.
 
 ### What we have done so far
 For the first phase of the code implementation, we planned on working towards loading the database with records from the online Spotify dataset. While we were downloading the dataset, we ran into the issue of our machines not having enough space to unzip the data for parsing the json file. Eventually, we decided to focus on one json file at a time since our machines could work with it. Before we could start to load data to the database, we needed to create a database server.. Using MySql Workbench application, we created a database connection server to host our Spotify playlist data. The sql queries we used for making the database and the respective tables are in the `createDbandTables.sql` file found under the root directory. 
