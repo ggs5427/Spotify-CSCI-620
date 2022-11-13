@@ -13,14 +13,14 @@ CREATE TABLE Playlists(
 CREATE TABLE Tracks(
 	id INT PRIMARY KEY AUTO_INCREMENT,
     Name TEXT NOT NULL,
-    albumId TEXT,
+    albumId INT,
     durationMs INT
 ) ;
 
 CREATE TABLE Albums(
-    Name TEXT NOT NULL,
+    Name INT NOT NULL,
     id INT PRIMARY KEY AUTO_INCREMENT, 
-    artistId varchar(320)
+    artistId INT
 ); 
 
 CREATE TABLE Artists(
