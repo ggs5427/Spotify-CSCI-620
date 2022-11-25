@@ -2,7 +2,7 @@
 Song recommendation system for Spotify. We use users' playlist tracks list to tailor song recommendations that will fit their playlist. This recommendation system will be mainly focusing on suggesting new songs, providing an estimate on the possible popularity of a playlist, giving users the option to generate a playlist based on a popular song and giving users the option to create a playlist of frequently added songs.
 
 ### What we have done so far
-For the first phase of the code implementation, we planned on working towards loading the database with records from the online Spotify dataset. While we were downloading the dataset, we ran into the issue of our machines not having enough space to unzip the data for parsing the json file. Eventually, we decided to focus on one json file at a time since our machines could work with it. Before we could start to load data to the database, we needed to create a database server.. Using MySql Workbench application, we created a database connection server to host our Spotify playlist data. The sql queries we used for making the database and the respective tables are in the `createDbandTables.sql` file found under the root directory. 
+For the first phase of the code implementation, we planned on working towards loading the database with records from the online Spotify dataset. While we were downloading the dataset, we ran into the issue of our machines not having enough space to unzip the data for parsing the json file. Eventually, we decided to focus on one json file at a time since our machines could work with it. Before we could start to load data to the database, we needed to create a database server.. Using Postgres, we created a database connection server to host our Spotify playlist data. The sql queries we used for making the database and the respective tables are in the `createDbandTables.sql` file found under the root directory. 
 
 After setting up the necessary tables, we started working on the code that parses the json file and loads the data to our database. The json file included metadata about the playlist and tracks. A sample data of playlists can be found in `sampleData.json` file. The following is a snippet of the json file
 
@@ -34,13 +34,4 @@ From the json file, we took all the necessary information for filling up the dat
 
 ![Spotify ERD drawio (1)](https://user-images.githubusercontent.com/47192431/197652946-26e37d0e-6fa9-4622-a953-52e5094116de.png)
 
-While trying to load the data, we ran into an issue with our database connection. We found that the execute statement for inserting records into the database was not working. We took the sql query from our code to the Workbench query console to test if the query was working, and it sucessfully added records to the database. 
-
-```
-INSERT INTO Playlists (Name, Description, modifiedAt, numFollowers, numTracks, collaborative) VALUES ("test3", "test", STR_TO_DATE("10-17-2021 15:40:10", "%m-%d-%Y %H:%i:%s"), 0, 0, false);
-```
-
-After debugging our code, we found that the issue was when we were trying to insert into a table that has more than one column excluding the `id` column. We tried all different ways to use the tuple feature that Python MySql's `execute` function provided, but we were not able to fix the issue. We plan on fining a solution for this bug by the next phase.
-
-### Future Plans
-For the next phase, we will be prioritizing loading data into the database and implementing the recommendation system.
+Now the database holds around 1 million records.
