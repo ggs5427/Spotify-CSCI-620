@@ -4,29 +4,34 @@ import json
 from datetime import datetime
 import models
 import psycopg2
+import os
 
 DB_HOST = "localhost"
 DB_NAME = "spotify"
 DB_USER = "postgres"
 DB_PASS = "gelilasahle"
 
+DIR = 'data'
 
 def load_data(cur, spotifyDataBase):
-    dataFile = "sampleData.json"
+    dataFile = "mpd.slice.10000-10999.json"
     data = []
 
     try:
-        file = open(dataFile)
-        jsonData = file.read()
-        playlistsDatasets = json.loads(jsonData)
+        for filename in os.listdir(DIR):
+            f = os.path.join(DIR, filename)
+            file = open(f)
+            jsonData = file.read()
+            playlistsDatasets = json.loads(jsonData)
 
-        for data in playlistsDatasets['playlists']:
-            playlist = models.Playlists(data['name'], "-", data['modified_at'], data['num_followers'],
-                                        data['num_tracks'], data['collaborative'])
+            for data in playlistsDatasets['playlists']:
+                playlist = models.Playlists(data['name'], "-", data['modified_at'], data['num_followers'],
+                                            data['num_tracks'], data['collaborative'])
 
-            save_to_db(cur, playlist, data['tracks'], spotifyDataBase)
-            break
-        file.close()
+                save_to_db(cur, playlist, data['tracks'], spotifyDataBase)
+                break
+            file.close()
+            print("Done loading data for : " + f)
     except Exception as err:
         print("Could not read file.")
         return
@@ -52,25 +57,54 @@ def save_to_db(cur, playlist, tracksJson, spotifyDB):
 
             # Insert Artist
             cur.execute(
-                "INSERT INTO artists (artist_name) VALUES (%s) RETURNING id;",
+                "SELECT artist_name FROM artists WHERE artist_name=(%s);",
                 (artist.name,))
-            artistId = cur.fetchone()[0]
-            spotifyDB.commit()
+            name = cur.fetchone()[0]
+            if name == "":
+                cur.execute(
+                    "INSERT INTO artists (artist_name) VALUES (%s) RETURNING id;",
+                    (artist.name,))
+                artistId = cur.fetchone()[0]
+                spotifyDB.commit()
+            else:
+                cur.execute(
+                "SELECT id FROM artists WHERE artist_name=(%s);",
+                (artist.name,))
+                artistId = cur.fetchone()[0]
 
             # Insert Album
             cur.execute(
-                "INSERT INTO albums (Name, artistId) VALUES (%s, %s) RETURNING id;", 
-                (album.name, artistId))
-            albumId = cur.fetchone()[0]
-            spotifyDB.commit()
-
+                "SELECT Name FROM albums WHERE Name=(%s);",
+                (album.name,))
+            name = cur.fetchone()[0]
+            if name == "":
+                cur.execute(
+                    "INSERT INTO albums (Name, artistId) VALUES (%s, %s) RETURNING id;", 
+                    (album.name, artistId))
+                albumId = cur.fetchone()[0]
+                spotifyDB.commit()
+            else:
+                cur.execute(
+                "SELECT id FROM albums WHERE Name=(%s);",
+                (album.name,))
+                albumId = cur.fetchone()[0]
             # Insert Track
             cur.execute(
-                "INSERT INTO tracks (track_name, albumId, durationMs) VALUES (%s, %s, %s) RETURNING id;",
-                (track.name, albumId, track.durationMs)
-            )
-            trackId = cur.fetchone()[0]
-            spotifyDB.commit()
+                "SELECT track_name FROM tracks WHERE track_name=(%s);",
+                (track.name,))
+            name = cur.fetchone()[0]
+            if name == "":
+                cur.execute(
+                    "INSERT INTO tracks (track_name, albumId, durationMs) VALUES (%s, %s, %s) RETURNING id;",
+                    (track.name, albumId, track.durationMs)
+                )
+                trackId = cur.fetchone()[0]
+                spotifyDB.commit()
+            else:
+                cur.execute(
+                "SELECT id FROM tracks WHERE track_name=(%s);",
+                (track.name,))
+                trackId = cur.fetchone()[0]
 
             # Add to TrackPlaylist
             cur.execute("INSERT INTO trackPlaylists (trackId, playlistId) VALUES (%s, %s);", (trackId, playlist_id))
@@ -163,11 +197,13 @@ def main():
 
         # loads data from json files to respective tables
         load_data(cursorObj, spotifyDataBase)
-
+        #cursorObj.execute("""SELECT COUNT(*) FROM trackPlaylists;""")
+        #print(cursorObj.fetchone())
         # Commiting all changes made and disconnecting from the server
         cursorObj.close()
         spotifyDataBase.commit()
         spotifyDataBase.close()
+        print("done :)")
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
