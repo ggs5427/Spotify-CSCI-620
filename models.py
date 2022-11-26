@@ -21,3 +21,8 @@ class Albums:
 class Artists:
     def __init__(self, name):
         self.name = name
+
+class Analysis:
+    def __init__(self, num_tracks, num_occur):
+        self.num_tracks = num_tracks
+        self.num_occur = num_occur

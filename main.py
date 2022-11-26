@@ -23,7 +23,7 @@ def load_data(cur, spotifyDataBase):
             file = open(f)
             jsonData = file.read()
             playlistsDatasets = json.loads(jsonData)
-
+            print("number of playlists : " + str(len(playlistsDatasets['playlists'])))
             for data in playlistsDatasets['playlists']:
                 playlist = models.Playlists(data['name'], "-", data['modified_at'], data['num_followers'],
                                             data['num_tracks'], data['collaborative'])
@@ -177,6 +177,24 @@ def create_tables(cur):
     except (Exception, psycopg2.DatabaseError) as err:
         print(err)
 
+def analysis(curr):
+    """
+    TODO:
+    - how many times each artist apears in a playlist
+    - how many times each song appears in a playlist
+    """
+    data = {}
+    curr.execute(""" SELECT id, artist_name FROM artists; """)
+    artists = curr.fetchall()
+    
+    for artist in artists:
+        curr.execute("""SELECT id FROM albums WHERE albums.artistId=%s;""", (int(artist[0]),))
+        albums = curr.fetchall()
+        for album in albums:
+            curr.execute("""SELECT COUNT(*) FROM tracks WHERE tracks.albumId=%s;""", (int(album[0]),))
+            data[artist[1]] = [artist[0], curr.fetchone()[0]]
+
+    return data
 
 def main():
     # Establishing a connection with the DB
@@ -195,8 +213,9 @@ def main():
         #create_tables(cursorObj)
 
         # loads data from json files to respective tables
-        load_data(cursorObj, spotifyDataBase)
-        #cursorObj.execute("""SELECT COUNT(*) FROM trackPlaylists;""")
+        #load_data(cursorObj, spotifyDataBase)
+        #cursorObj.execute("""SELECT COUNT(*) FROM playlists;""")
+        print(analysis(cursorObj))
         #print(cursorObj.fetchone())
         # Commiting all changes made and disconnecting from the server
         cursorObj.close()
