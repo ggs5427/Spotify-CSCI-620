@@ -29,13 +29,12 @@ def load_data(cur, spotifyDataBase):
                                             data['num_tracks'], data['collaborative'])
 
                 save_to_db(cur, playlist, data['tracks'], spotifyDataBase)
-                break
             file.close()
             print("Done loading data for : " + f)
     except Exception as err:
         print("Could not read file.")
         return
-
+    
 
 def save_to_db(cur, playlist, tracksJson, spotifyDB):
     try:
@@ -59,8 +58,8 @@ def save_to_db(cur, playlist, tracksJson, spotifyDB):
             cur.execute(
                 "SELECT artist_name FROM artists WHERE artist_name=(%s);",
                 (artist.name,))
-            name = cur.fetchone()[0]
-            if name == "":
+            name = cur.fetchone()
+            if name is None:
                 cur.execute(
                     "INSERT INTO artists (artist_name) VALUES (%s) RETURNING id;",
                     (artist.name,))
@@ -76,8 +75,8 @@ def save_to_db(cur, playlist, tracksJson, spotifyDB):
             cur.execute(
                 "SELECT Name FROM albums WHERE Name=(%s);",
                 (album.name,))
-            name = cur.fetchone()[0]
-            if name == "":
+            name = cur.fetchone()
+            if name is None:
                 cur.execute(
                     "INSERT INTO albums (Name, artistId) VALUES (%s, %s) RETURNING id;", 
                     (album.name, artistId))
@@ -92,8 +91,8 @@ def save_to_db(cur, playlist, tracksJson, spotifyDB):
             cur.execute(
                 "SELECT track_name FROM tracks WHERE track_name=(%s);",
                 (track.name,))
-            name = cur.fetchone()[0]
-            if name == "":
+            name = cur.fetchone()
+            if name is None:
                 cur.execute(
                     "INSERT INTO tracks (track_name, albumId, durationMs) VALUES (%s, %s, %s) RETURNING id;",
                     (track.name, albumId, track.durationMs)
