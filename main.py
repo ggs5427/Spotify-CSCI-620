@@ -178,23 +178,33 @@ def create_tables(cur):
         print(err)
 
 def analysis(curr):
-    """
-    TODO:
-    - how many times each artist apears in a playlist
-    - how many times each song appears in a playlist
-    """
-    data = {}
+    data = {} # stores how many songs each artist has
     curr.execute(""" SELECT id, artist_name FROM artists; """)
     artists = curr.fetchall()
+    trackdata = {} # how many times each song aears in playlists
     
     for artist in artists:
         curr.execute("""SELECT id FROM albums WHERE albums.artistId=%s;""", (int(artist[0]),))
         albums = curr.fetchall()
+        count = 0 # number of tracks
+        tracks = None
         for album in albums:
-            curr.execute("""SELECT COUNT(*) FROM tracks WHERE tracks.albumId=%s;""", (int(album[0]),))
-            data[artist[1]] = [artist[0], curr.fetchone()[0]]
+            curr.execute("""SELECT track_name,id FROM tracks WHERE tracks.albumId=%s;""", (int(album[0]),))
+            tracks = curr.fetchall()
+            count += len(tracks)
 
-    return data
+        # count for how many times a track appears in playlists
+        count_playlist = 0
+        if(tracks is not None):
+            for track in tracks:
+                #print(track)
+                curr.execute("""SELECT COUNT(*) FROM trackPlaylists WHERE trackPlaylists.trackId=%s;""", (int(track[1]),))
+                count_playlist = curr.fetchone()
+                trackdata[track[0]] = count_playlist[0]
+
+        data[artist[1]] = [artist[0], count]
+
+    return data, trackdata
 
 def main():
     # Establishing a connection with the DB
@@ -222,8 +232,8 @@ def main():
         spotifyDataBase.commit()
         spotifyDataBase.close()
         print("done :)")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+    # except (Exception, psycopg2.DatabaseError) as error:
+    #     print(error)
     finally:
         if spotifyDataBase is not None:
             spotifyDataBase.close()
