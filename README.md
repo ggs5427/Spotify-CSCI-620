@@ -35,3 +35,18 @@ From the json file, we took all the necessary information for filling up the dat
 ![Spotify ERD drawio (1)](https://user-images.githubusercontent.com/47192431/197652946-26e37d0e-6fa9-4622-a953-52e5094116de.png)
 
 Now the database holds around 1 million records.
+
+Code file description:-
+
+api_calls.py :- This file uses the track table to make api calls to all the tracks to get the attribute data set for songs
+		    Also stores the attribute set, which is used to train KMeans
+
+create_clustered_table.py:- This file is used to create the KMeans labels for tracks and store it in trackType table
+
+plot_kmeans.py:- This file is used to plot the KMeans scatter plot for different classes
+
+recommend.py:- This file is used to take a playlist id from the user and recommend 3 songs that
+		   could continue the playlist.
+
+main.py:- This file is used to populate the data in the database.
+
