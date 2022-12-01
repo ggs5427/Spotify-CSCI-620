@@ -181,7 +181,7 @@ def analysis(curr):
     data = {} # stores how many songs each artist has
     curr.execute(""" SELECT id, artist_name FROM artists; """)
     artists = curr.fetchall()
-    trackdata = {} # how many times each song aears in playlists
+    trackdata = {} # how many times each song appears in playlists
     
     for artist in artists:
         curr.execute("""SELECT id FROM albums WHERE albums.artistId=%s;""", (int(artist[0]),))
