@@ -1,0 +1,20 @@
+Gelila Sahle
+ - main.py
+ - models.py
+Eshaan Jayant Deshpande
+ - out.csv
+ - create_clustered_table.py
+ - createDbandTables.sql
+ - plot_kmeans.py
+ - recommend.py
+ - api_calls.py
+Oluwamayowa (Mayo) Olojo
+ -  bar_art.py
+ -  bar_art2.py
+ -  bar_collab.py
+ -  scatter_collab.py
+ -  albums.csv
+ -  playlists_false.csv
+ -  playlists_true.csv
+ -  playlists.csv
+ - queries.md
