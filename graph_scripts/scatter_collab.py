@@ -5,9 +5,7 @@
 
 import pandas as pd
 import math
-import numpy as np
 from matplotlib import pyplot as plt
-from scipy import stats
 
 # Make a list of columns
 columns = ['numfollowers', 'numtracks']
