@@ -33,11 +33,3 @@ bar.set_xlabel("Collaborative")
 bar.set_ylabel("Average (x8 for tracks)")
 
 plt.show(block=True)
-
-"""
-plt.title("Popularity Anaylsis Based On Collaborativity")
-plt.xlabel("Collaborative")
-plt.ylabel("Average Amount of Followers")
-
-plt.show()
-"""
